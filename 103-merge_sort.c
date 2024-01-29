@@ -8,7 +8,7 @@ void merge_sort_recursive(int *subarr, int *buff, size_t front, size_t back);
  * @subarr: The array to be sorted.
  * @buff: A temporary array to store intermediate results.
  * @front: The starting index of the sub-array to be sorted.
- * @end: The ending index of the sub-array to be sorted.
+ * @back: The ending index of the sub-array to be sorted.
  */
 void merge_sort_recursive(int *subarr, int *buff, size_t front, size_t back)
 {
