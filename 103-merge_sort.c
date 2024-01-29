@@ -1,64 +1,44 @@
 #include "sort.h"
 
-/**
- * merge - Merges two sub-arrays into a single sorted array.
- * @array: The original array containing the sub-arrays to be merged.
- * @temp: A temporary array to store the merged result.
- * @left: The starting index of the left sub-array.
- * @mid: The ending index of the left sub-array (midpoint).
- * @right: The ending index of the right sub-array.
- */
-void merge(int *array, int *temp, size_t left, size_t mid, size_t right)
-{
-	size_t i, j, k;
-
-	printf("Merging...\n");
-
-	printf("[left]: ");
-	print_array(array + left, mid - left + 1);
-
-	printf("[right]: ");
-	print_array(array + mid + 1, right - mid);
-
-	for (i = left, j = mid + 1, k = left; i <= mid && j <= right; ++k)
-	{
-		if (array[i] <= array[j])
-			temp[k] = array[i++];
-		else
-			temp[k] = array[j++];
-	}
-
-	while (i <= mid)
-		temp[k++] = array[i++];
-
-	while (j <= right)
-		temp[k++] = array[j++];
-
-	printf("[Done]: ");
-	print_array(temp + left, right - left + 1);
-
-	for (i = left; i <= right; ++i)
-		array[i] = temp[i];
-
-}
+void merge_sort(int *array, size_t size);
+void merge_sort_recursive(int *subarr, int *buff, size_t front, size_t back);
 
 /**
  * merge_sort_recursive - Recursively Merge Sort sub-array.
- * @array: The array to be sorted.
- * @temp: A temporary array to store intermediate results.
- * @left: The starting index of the sub-array to be sorted.
- * @right: The ending index of the sub-array to be sorted.
+ * @subarr: The array to be sorted.
+ * @buff: A temporary array to store intermediate results.
+ * @front: The starting index of the sub-array to be sorted.
+ * @end: The ending index of the sub-array to be sorted.
  */
-void merge_sort_recursive(int *array, int *temp, size_t left, size_t right)
+void merge_sort_recursive(int *subarr, int *buff, size_t front, size_t back)
 {
-	if (left < right)
+	size_t mid, index, jndex, kndex = 0;
+
+	if (back - front > 1)
 	{
-		size_t mid = left + (right - left) / 2;
+		mid = front + (back - front) / 2;
+		merge_sort_recursive(subarr, buff, front, mid);
+		merge_sort_recursive(subarr, buff, mid, back);
 
-		merge_sort_recursive(array, temp, left, mid);
-		merge_sort_recursive(array, temp, mid + 1, right);
+		printf("Merging...\n[left]: ");
+		print_array(subarr + front, mid - front);
 
-		merge(array, temp, left, mid, right);
+		printf("[right]: ");
+		print_array(subarr + mid, back - mid);
+
+		for (index = front, jndex = mid; index < mid && jndex < back;
+		     kndex++)
+			buff[kndex] = (subarr[index] < subarr[jndex]) ?
+				subarr[index++] : subarr[jndex++];
+		for (; index < mid; index++)
+			buff[kndex++] = subarr[index];
+		for (; jndex < back; jndex++)
+			buff[kndex++] = subarr[jndex];
+		for (index = front, kndex = 0; index < back; index++)
+			subarr[index] = buff[kndex++];
+
+		printf("[Done]: ");
+		print_array(subarr + front, back - front);
 	}
 }
 
@@ -69,17 +49,15 @@ void merge_sort_recursive(int *array, int *temp, size_t left, size_t right)
  */
 void merge_sort(int *array, size_t size)
 {
-	int *temp;
+	int *buffer;
 
 	if (array == NULL || size < 2)
 		return;
 
-	temp = malloc(size * sizeof(int));
-
-	if (temp == NULL)
+	buffer = malloc(sizeof(int) * size);
+	if (buffer == NULL)
 		return;
 
-	merge_sort_recursive(array, temp, 0, size - 1);
-
-	free(temp);
+	merge_sort_recursive(array, buffer, 0, size);
+	free(buffer);
 }
